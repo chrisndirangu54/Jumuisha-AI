@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'services/assistive.dart';
 import 'screens/service_journey.dart';
+import 'screens/voice_search.dart';
 
 const baseUrl = String.fromEnvironment(
   'API_BASE_URL',
@@ -151,6 +152,32 @@ class _JumuishaAppState extends State<JumuishaApp> {
                 subtitle: const Text('Shorter descriptions for easier navigation'),
                 value: easyRead,
                 onChanged: (v) => setState(() => easyRead = v),
+              ),
+              FilledButton.icon(
+                icon: const Icon(Icons.mic),
+                label: const Text('Search by voice or typing'),
+                onPressed: () async {
+                  final result = await Navigator.of(context).push<String>(
+                    MaterialPageRoute(builder: (_) => const VoiceServiceSearch()),
+                  );
+                  if (!context.mounted || result == null || result.isEmpty) return;
+                  final all = await servicesFuture;
+                  if (!context.mounted || all == null) return;
+                  final matches = all.where((service) =>
+                    ('${service.name} ${service.description} ${service.agency}')
+                      .toLowerCase().contains(result.toLowerCase())).toList();
+                  await showDialog<void>(context: context, builder: (context) => AlertDialog(
+                    title: const Text('Matching services'),
+                    content: SizedBox(width: 420, child: ListView(shrinkWrap: true, children: [
+                      if (matches.isEmpty) const Text('No matching service. Browse the directory.'),
+                      for (final service in matches) ListTile(
+                        title: Text(service.name),
+                        onTap: () {Navigator.pop(context); Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => PublicServiceJourney(service:service)));},
+                      ),
+                    ])),
+                    actions: [TextButton(onPressed: () => Navigator.pop(context),child: const Text('Close'))],
+                  ));
+                },
               ),
               const SizedBox(height: 18),
               Semantics(
