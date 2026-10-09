@@ -108,3 +108,6 @@ app.include_router(experience_router)
 
 from .trust import router as trust_router
 app.include_router(trust_router)
+
+from .secure_drafts import router as private_router
+app.include_router(private_router)
