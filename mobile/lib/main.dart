@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'services/assistive.dart';
 
 const baseUrl = String.fromEnvironment(
   'API_BASE_URL',
@@ -32,6 +33,35 @@ class _JumuishaAppState extends State<JumuishaApp> {
   bool reduceMotion = true;
   bool easyRead = false;
   String language = 'English';
+  final assistive = AssistiveController();
+  final cache = PublicCatalogueCache();
+  List<GovernmentService>? servicesCache;
+  Future<List<GovernmentService>>? servicesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    servicesFuture = loadServicesCached();
+  }
+
+  Future<List<GovernmentService>> loadServicesCached() async {
+    try {
+      final data = await loadServices();
+      await cache.save(jsonEncode(data.map((s) => {'id':s.id,'name':s.name,'description':s.description,'agency':s.agency,'official_url':s.officialUrl,'status':s.status}).toList()));
+      return data;
+    } catch (_) {
+      final cached = await cache.load();
+      if (cached == null) rethrow;
+      final items = jsonDecode(cached) as List<dynamic>;
+      return items.map((e) => GovernmentService.fromJson(e as Map<String, dynamic>)).toList();
+    }
+  }
+
+  @override
+  void dispose() {
+    assistive.stop();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final scheme = ColorScheme.fromSeed(
@@ -67,6 +97,15 @@ class _JumuishaAppState extends State<JumuishaApp> {
               ),
               const SizedBox(height: 8),
               const Text('Accessible service guidance. Government submissions are not enabled in this prototype.'),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: () => assistive.speak(
+                  language == 'Kiswahili' ? 'Huduma za serikali kwa wote' : 'Government services for everyone',
+                  language: language == 'Kiswahili' ? 'sw-KE' : 'en-US',
+                ),
+                icon: const Icon(Icons.volume_up),
+                label: const Text('Read introduction aloud'),
+              ),
               const SizedBox(height: 20),
               Semantics(
                 header: true,
@@ -120,7 +159,7 @@ class _JumuishaAppState extends State<JumuishaApp> {
               ),
               const SizedBox(height: 8),
               FutureBuilder<List<GovernmentService>>(
-                future: loadServices(),
+                future: servicesFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Text('Unable to load services. Check the API connection. You may try again.');
@@ -140,7 +179,12 @@ class _JumuishaAppState extends State<JumuishaApp> {
                                 ? service.agency
                                 : '${service.agency}\n${service.description}'),
                             isThreeLine: !easyRead,
-                            trailing: const Icon(Icons.chevron_right),
+                            trailing: IconButton(
+                              tooltip: 'Read service aloud',
+                              onPressed: () => assistive.speak(service.name + '. ' + service.description,
+                                language: language == 'Kiswahili' ? 'sw-KE' : 'en-US'),
+                              icon: const Icon(Icons.volume_up),
+                            ),
                             onTap: () => showDialog<void>(
                               context: context,
                               builder: (context) => AlertDialog(
