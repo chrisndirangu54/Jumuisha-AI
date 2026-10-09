@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Human-validated Kenyan Sign Language asset",
+  "type": "object",
+  "required": [
+    "id",
+    "phrase_id",
+    "locale",
+    "media_type",
+    "uri",
+    "sha256",
+    "reviewer_approval",
+    "license",
+    "caption"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "phrase_id": {
+      "type": "string"
+    },
+    "locale": {
+      "const": "ksl-KE"
+    },
+    "media_type": {
+      "enum": [
+        "video/mp4",
+        "image/webp",
+        "application/json"
+      ]
+    },
+    "uri": {
+      "type": "string"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "reviewer_approval": {
+      "type": "object",
+      "required": [
+        "reviewed_by",
+        "reviewed_at",
+        "version"
+      ],
+      "properties": {
+        "reviewed_by": {
+          "type": "string"
+        },
+        "reviewed_at": {
+          "type": "string"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "license": {
+      "type": "string"
+    },
+    "caption": {
+      "type": "string"
+    },
+    "alt_text": {
+      "type": "string"
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "fallback_text": {
+      "type": "string"
+    }
+  }
+}
