@@ -52,3 +52,10 @@ docs/      service onboarding, privacy, safety and field validation plan
 Consent, dignity, autonomy, low-bandwidth access, local language inclusion, safety, verifiable source provenance, and no invented government fees or eligibility determinations.
 
 MIT license for project code; separately obtained recordings/data keep their own consent and licenses.
+
+## October 9, 2026 implementation update
+- The Flutter catalogue now opens a dedicated service journey with agency URL, non-authoritative guide, consent-gated local notes and delete control.
+- Read-only API endpoints under `/v1` provide deterministic bilingual navigation, service instructions, human assistance guidance and capability reporting.
+- Device TTS and a local public-catalogue cache were added. No private citizen information should be stored in that public cache.
+- Additional API and widget regression tests were added. GitHub Actions workflows are committed, but successful execution has not been verified in this session.
+- **Not implemented or validated**: live agency submission, production account/auth, encrypted personal draft synchronization, actual SMS/USSD/IVR provider flows, live interpreter dispatch, qualified KSL recordings, automatic KSL recognition, actual refreshable Braille device tests, comprehensive WCAG audit, and deployment. Do not deploy for citizen personal data yet.
