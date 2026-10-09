@@ -101,3 +101,7 @@ def submit(service_id: str):
     if service_id not in INDEX:
         raise HTTPException(status_code=404,detail="Service not found")
     raise HTTPException(status_code=501,detail="Live government submission is unavailable until official integration and authorization are completed.")
+
+# Read-only accessible navigation routes. Import after the catalogue is initialized.
+from .experience import router as experience_router
+app.include_router(experience_router)
