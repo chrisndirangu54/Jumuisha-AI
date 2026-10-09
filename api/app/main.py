@@ -105,3 +105,6 @@ def submit(service_id: str):
 # Read-only accessible navigation routes. Import after the catalogue is initialized.
 from .experience import router as experience_router
 app.include_router(experience_router)
+
+from .trust import router as trust_router
+app.include_router(trust_router)
