@@ -7,17 +7,26 @@ from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import BaseModel, Field
 from cryptography.fernet import Fernet, InvalidToken
 from .main import INDEX
+from .oidc import verify_user_token
 router=APIRouter(prefix="/v1/private",tags=["encrypted private drafts"])
 DB=os.getenv("JUMUISHA_DB_PATH","/tmp/jumuisha_drafts.sqlite3")
 def require_user(authorization: str | None=Header(default=None)):
-    # Pilot-only single-operator auth, explicitly NOT citizen account authentication.
-    auth=os.getenv('JUMUISHA_PILOT_BEARER_TOKEN')
-    key=os.getenv('JUMUISHA_FERNET_KEY')
-    if not auth or not key:
-        raise HTTPException(503,"Secure private workflow is not configured")
-    if not authorization or not secrets.compare_digest(authorization,f"Bearer {auth}"):
-        raise HTTPException(401,"Authentication required")
+    key=os.getenv("JUMUISHA_FERNET_KEY")
+    if not key:
+        raise HTTPException(503,"Encrypted storage is not configured")
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(401,"Bearer authentication required")
+    token=authorization[7:]
+    if os.getenv("JUMUISHA_OIDC_ISSUER"):
+        return verify_user_token(token)
+    # Strictly opt-in local operator mode; NEVER use in a public deployment.
+    auth=os.getenv("JUMUISHA_PILOT_BEARER_TOKEN")
+    if os.getenv("JUMUISHA_ENABLE_PILOT_AUTH")!="true" or not auth:
+        raise HTTPException(503,"OIDC authentication not configured")
+    if not secrets.compare_digest(token,auth):
+        raise HTTPException(401,"Invalid bearer token")
     return "pilot-operator"
+
 def cipher():
     try: return Fernet(os.environ["JUMUISHA_FERNET_KEY"].encode())
     except (ValueError,TypeError): raise HTTPException(503,"Encryption key misconfigured")
