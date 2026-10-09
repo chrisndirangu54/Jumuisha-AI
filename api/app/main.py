@@ -111,3 +111,6 @@ app.include_router(trust_router)
 
 from .secure_drafts import router as private_router
 app.include_router(private_router)
+
+from .security import install_security
+install_security(app)
