@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'services/assistive.dart';
 import 'screens/service_journey.dart';
 import 'screens/voice_search.dart';
+import 'screens/ksl_player.dart';
 
 const baseUrl = String.fromEnvironment(
   'API_BASE_URL',
@@ -225,8 +226,14 @@ class _JumuishaAppState extends State<JumuishaApp> {
                 },
               ),
               const SizedBox(height: 12),
-              const Text(
-                'Kenyan Sign Language: validated video and sprite assets will appear here when licensed and approved. Use a qualified interpreter for important official decisions.',
+              Semantics(
+                header: true,
+                child: Text('Kenyan Sign Language',style: Theme.of(context).textTheme.titleMedium),
+              ),
+              const KslPlayer(
+                approvedAsset: null,
+                reviewed: false,
+                caption: 'Approved KSL instructions are not yet available. Please use text or request a qualified interpreter.',
               ),
             ],
           ),
