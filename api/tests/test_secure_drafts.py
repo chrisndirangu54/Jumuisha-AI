@@ -11,6 +11,8 @@ def test_private_storage_fails_closed_when_unconfigured(monkeypatch):
 
 def test_encrypted_draft_roundtrip_and_deletion(monkeypatch, tmp_path):
     monkeypatch.setenv("JUMUISHA_FERNET_KEY", Fernet.generate_key().decode())
+    monkeypatch.setenv("JUMUISHA_ENABLE_PILOT_AUTH", "true")
+    monkeypatch.delenv("JUMUISHA_OIDC_ISSUER",raising=False)
     monkeypatch.setenv("JUMUISHA_PILOT_BEARER_TOKEN", "pilot-token-for-test-only")
     monkeypatch.setattr(storage, "DB", str(tmp_path / "pilot.sqlite3"))
     c = TestClient(app)
