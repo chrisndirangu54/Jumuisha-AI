@@ -9,17 +9,17 @@ from cryptography.fernet import Fernet, InvalidToken
 from .main import INDEX
 router=APIRouter(prefix="/v1/private",tags=["encrypted private drafts"])
 DB=os.getenv("JUMUISHA_DB_PATH","/tmp/jumuisha_drafts.sqlite3")
-KEY=os.getenv("JUMUISHA_FERNET_KEY")
-AUTH=os.getenv("JUMUISHA_PILOT_BEARER_TOKEN")
 def require_user(authorization: str | None=Header(default=None)):
     # Pilot-only single-operator auth, explicitly NOT citizen account authentication.
-    if not AUTH or not KEY:
+    auth=os.getenv('JUMUISHA_PILOT_BEARER_TOKEN')
+    key=os.getenv('JUMUISHA_FERNET_KEY')
+    if not auth or not key:
         raise HTTPException(503,"Secure private workflow is not configured")
-    if not authorization or not secrets.compare_digest(authorization,f"Bearer {AUTH}"):
+    if not authorization or not secrets.compare_digest(authorization,f"Bearer {auth}"):
         raise HTTPException(401,"Authentication required")
     return "pilot-operator"
 def cipher():
-    try: return Fernet(KEY.encode())
+    try: return Fernet(os.environ["JUMUISHA_FERNET_KEY"].encode())
     except (ValueError,TypeError): raise HTTPException(503,"Encryption key misconfigured")
 def connect():
     connection=sqlite3.connect(DB,timeout=5)
