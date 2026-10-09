@@ -59,3 +59,12 @@ MIT license for project code; separately obtained recordings/data keep their own
 - Device TTS and a local public-catalogue cache were added. No private citizen information should be stored in that public cache.
 - Additional API and widget regression tests were added. GitHub Actions workflows are committed, but successful execution has not been verified in this session.
 - **Not implemented or validated**: live agency submission, production account/auth, encrypted personal draft synchronization, actual SMS/USSD/IVR provider flows, live interpreter dispatch, qualified KSL recordings, automatic KSL recognition, actual refreshable Braille device tests, comprehensive WCAG audit, and deployment. Do not deploy for citizen personal data yet.
+
+## 2026-10-09 voice / KSL delivery
+- VoiceSearch provides device-provided speech recognition with manual text correction and a keyboard alternative. It searches local catalogue entries, not citizen records.
+- KslPlayer supports HTTPS-hosted video only when the caller marks it reviewed; the app currently supplies **no approved assets**, so users see an explicit fallback message.
+- Tests validate the input alternative and the no-asset KSL fallback.
+- Device deployment still requires Android RECORD_AUDIO permission and iOS microphone/speech usage descriptions; these must be committed in generated platform projects and reviewed with users.
+- Speech recognition availability and privacy depend on native OS vendors. Do not describe it as offline or Kenyan-language validated until independently tested.
+- A valid KSL asset must pass an ingestion gate that checks actual recording provenance, consent/license, hash, community sign-off and domain allowlist; the UI's reviewed flag alone is not secure approval.
+- Still blocked for national production: government API agreements, community-evaluated signing assets, real assistive-device tests, citizen-grade encrypted offline sync, persistent multi-tenant DB, observability, security review and verified passing builds.
