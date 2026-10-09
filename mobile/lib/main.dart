@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'services/assistive.dart';
+import 'screens/service_journey.dart';
 
 const baseUrl = String.fromEnvironment(
   'API_BASE_URL',
@@ -185,21 +186,9 @@ class _JumuishaAppState extends State<JumuishaApp> {
                                 language: language == 'Kiswahili' ? 'sw-KE' : 'en-US'),
                               icon: const Icon(Icons.volume_up),
                             ),
-                            onTap: () => showDialog<void>(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text(service.name),
-                                content: SingleChildScrollView(
-                                  child: Text(
-                                    '${service.description}\n\nOfficial website: ${service.officialUrl}\n\nNo government application can be submitted through this prototype.',
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Close'),
-                                  ),
-                                ],
+                            onTap: () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => PublicServiceJourney(service: service),
                               ),
                             ),
                           ),
