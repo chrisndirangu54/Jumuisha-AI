@@ -5,6 +5,7 @@ import 'services/assistive.dart';
 import 'screens/service_journey.dart';
 import 'screens/voice_search.dart';
 import 'screens/ksl_player.dart';
+import 'screens/early_warning.dart';
 
 const baseUrl = String.fromEnvironment(
   'API_BASE_URL',
@@ -108,6 +109,13 @@ class _JumuishaAppState extends State<JumuishaApp> {
                 ),
                 icon: const Icon(Icons.volume_up),
                 label: const Text('Read introduction aloud'),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.warning_amber),
+                label: const Text('Public early warnings'),
+                onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                  builder: (_) => const EarlyWarningScreen(apiBaseUrl: baseUrl))),
               ),
               const SizedBox(height: 20),
               Semantics(
