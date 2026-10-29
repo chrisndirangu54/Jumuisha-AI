@@ -5,6 +5,8 @@
 - Public `GET /v1/early-warning/status` explains that there is **no connected official live feed**.
 - Restricted `POST /v1/early-warning/internal/alerts` and `DELETE /v1/early-warning/internal/alerts/{id}`, disabled without a configured key and approved source name.
 - Enforced verified, actual, currently valid alert status; test/exercise, expired or unverified alerts do not appear publicly.
+- Sequential alert revisions using a stable identifier; blocked stale/conflicting updates and publisher identity changes.
+- Retractions yield public tombstones at `GET /v1/early-warning/retractions`, so clients can remove withdrawn warnings.
 - Flutter accessible warning screen with county search, instructions, origin, expiry and conspicuous empty-feed safety warning.
 - API tests for blocked ingestion, filtering and retraction.
 
@@ -17,7 +19,7 @@ Never embed the secret in Flutter. Source names alone are **not** evidence of ge
 
 ## Production blockers
 1. Written coordination with the relevant Kenyan issuing authorities and authoritative data channels (e.g. Kenya Meteorological Department and disaster-management authorities, as applicable); evaluate CAP 1.2-compliant alerts, signed feeds and cancellation/update IDs.
-2. Durable transactional PostgreSQL storage with publisher authentication, audit trails, replay defense, signature checking, idempotency, revocation, TTL, monitoring and high availability. The current in-memory store is erased on restart and is **not a dependable warning system**.
+2. Durable transactional PostgreSQL storage with publisher authentication, audit trails, replay defense, signature checking, idempotency, revocation, TTL, monitoring and high availability. The current in-memory alert and retraction stores are erased on restart and is **not a dependable warning system**.
 3. Explicit geospatial coverage from approved county/subcounty/ward polygons, opt-in coarse-location subscription and a non-location alternative. Avoid collecting precise GPS by default.
 4. Reliable opt-in SMS, USSD, voice/IVR and push notifications with delivery receipts, retry queues, language choices, consent, quiet-hour override policy for genuine emergencies and telecom/vendor agreements.
 5. Human-reviewed English/Kiswahili and Kenyan Sign Language warnings, screen-reader order, large text, vibration/audio equivalents and disability-community usability validation.
