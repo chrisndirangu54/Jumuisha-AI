@@ -114,3 +114,6 @@ app.include_router(private_router)
 
 from .security import install_security
 install_security(app)
+
+from .early_warning import router as early_warning_router
+app.include_router(early_warning_router)
