@@ -115,5 +115,8 @@ app.include_router(private_router)
 from .early_warning import router as early_warning_router
 app.include_router(early_warning_router)
 
+from .incident_intelligence import router as incident_intelligence_router
+app.include_router(incident_intelligence_router)
+
 from .security import install_security
 install_security(app)
